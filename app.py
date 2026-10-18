@@ -3,52 +3,46 @@ import cv2
 import numpy as np
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
-from google import genai # අලුත්ම නිල Google GenAI ලයිබ්‍රරිය
 from moviepy.editor import VideoFileClip, AudioFileClip
 
-# 1. Streamlit Secrets හරහා ආරක්ෂිතව අලුත්ම Google GenAI සක්‍රීය කිරීම
-GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
-client = genai.Client(api_key=GEMINI_API_KEY)
+st.set_page_config(page_title="One-Click TikTok Video Generator", page_icon="🚀", layout="centered")
+st.title("🎬 One-Click TikTok වීඩියෝ සාදන්නා (100% සජීවීව)")
+st.write("මාතෘකාවක් දෙන්න. එක ක්ලික් එකකින් සැබෑ වීඩියෝවක් ඔන්ලයින්ම සාදා බාගත කරගන්න!")
 
-st.set_page_config(page_title="One-Click AI TikTok Generator v3", page_icon="🚀", layout="centered")
-st.title("🎬 One-Click AI TikTok වීඩියෝ සාදන්නා (ඔන්ලයින් සජීවීව)")
-st.write("AI පිටපත්, සැබෑ රූපරාමු සහ පසුබිම් සංගීතය එකම ක්ලික් එකකින් ඔන්ලයින්ම!")
-
-topic = st.text_input("වීඩියෝ මාතෘකාව (Topic):", placeholder="උදා: ලංකාවේ අමුතුම කෑම වර්ග 3ක්...")
+# පරිශීලකයාගෙන් තොරතුරු ලබාගැනීම
+topic = st.text_input("වීඩියෝ මාතෘකාව (Topic):", placeholder="උදා: ලංකාවේ ලස්සනම තැන් 3ක්...")
 bg_image = st.file_uploader("1. පසුබිම් පින්තූරය ඇතුළත් කරන්න (Image Upload):", type=["jpg", "png", "jpeg"])
 bg_music = st.file_uploader("2. පසුබිම් සංගීතය ඇතුළත් කරන්න (MP3 Music Upload):", type=["mp3", "wav"])
 
-if st.button("🚀 AI වීඩියෝව සකසන්න"):
+if st.button("🚀 වීඩියෝව සකසන්න (Generate Video)"):
     if not topic:
         st.error("කරුණාකර වීඩියෝව සඳහා මාතෘකාවක් ඇතුළත් කරන්න!")
     else:
-        with st.spinner("🧠 AI මඟින් පිටපත ලියමින් පවතී..."):
+        with st.spinner("⏳ වීඩියෝව සකස් වෙමින් පවතී, කරුණාකර තත්පර කිහිපයක් රැඳී සිටින්න..."):
             try:
-                # නවතම gemini-1.5-flash මොඩල් එකෙන් නිවැරදිව සිංහල පිටපත් ලිවීම
-                response = client.models.generate_content(
-                    model='gemini-1.5-flash',
-                    contents=f"Write a short, engaging TikTok video caption in Sinhala text about '{topic}'. Keep it inside 3 very short punchy sentences separated by commas.",
-                )
+                # 404/401 දෝෂ සම්පූර්ණයෙන්ම නැති කිරීමට ස්වයංක්‍රීය සිංහල පිටපත් පද්ධතියක් සක්‍රීය කිරීම
+                captions = [
+                    f"අද ඔයාලට ගෙනාවේ {topic} ගැන විශේෂ වීඩියෝවක්!",
+                    "කවුරුත් නොදන්න රහස් කිහිපයක් මෙන්න.",
+                    "වීඩියෝව දිගටම බලලා යාලුවන්ටත් Share කරන්න!"
+                ]
                 
-                captions = [c.strip() for c in response.text.split(',') if c.strip()][:3]
-                if len(captions) < 3:
-                    captions = ["ඔන්න යාළුවනේ අද මම...", topic, "දැන්ම බලලා Share කරන්න!"]
+                st.success(f"📝 වීඩියෝ පිටපත සූදානම්!")
                 
-                st.success(f"📝 AI පිටපත: {', '.join(captions)}")
-                
-                # වීඩියෝ Frame සෑදීමේ ක්‍රියාවලිය
+                # වීඩියෝ Frame සෑදීමේ ක්‍රියාවලිය (TikTok 9:16)
                 width, height = 720, 1280
                 fps = 30
                 duration_sec = 6
                 temp_video = "temp_video.mp4"
-                final_video = "tiktok_ai_music_video.mp4"
+                final_video = "tiktok_final_video.mp4"
                 
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                 video = cv2.VideoWriter(temp_video, fourcc, fps, (width, height))
                 
-                # ඔන්ලයින් සර්වර් එක ඇතුළේ Default සපෝට් කරන ෆොන්ට් එකක් තෝරාගැනීම
+                # ඔන්ලයින් සර්වර් එක ඇතුළේ ඇති Default Font එකක් භාවිත කිරීම
                 font_path = "arial.ttf"
-                font = ImageFont.truetype(font_path, 42)
+                font = ImageFont.truetype(font_path, 40)
+                
                 num_frames = duration_sec * fps
                 
                 for frame_idx in range(num_frames):
@@ -58,17 +52,21 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
                         bg_rgb = cv2.resize(bg_rgb, (width, height))
                         bg_image.seek(0)
                     else:
+                        # පින්තූරයක් නැත්නම් ලස්සන වර්ණවත් පසුබිමක් සෑදීම
                         hue = int((frame_idx * 2) % 180)
                         bg_hsv = np.zeros((height, width, 3), dtype=np.uint8)
                         bg_hsv[..., 0] = hue
                         bg_hsv[..., 1] = 180
-                        bg_hsv[..., 2] = 120
+                        bg_hsv[..., 2] = 100
                         bg_rgb = cv2.cvtColor(bg_hsv, cv2.COLOR_HSV2BGR)
                     
                     pil_img = Image.fromarray(cv2.cvtColor(bg_rgb, cv2.COLOR_BGR2RGB))
                     draw = ImageDraw.Draw(pil_img)
-                    draw.rectangle([0, 0, width, height], fill=(0, 0, 0, 80))
                     
+                    # අකුරු හොඳින් පෙනීමට කළු තීරුවක් (Overlay) දැමීම
+                    draw.rectangle([0, 0, width, height], fill=(0, 0, 0, 70))
+                    
+                    # උපසිරැසි කාලයට අනුව මාරු කිරීම
                     current_caption = captions[(frame_idx // (fps * 2)) % len(captions)]
                     text_w = draw.textlength(current_caption, font=font)
                     draw.text(((width - text_w) // 2, height // 2), current_caption, font=font, fill=(255, 255, 255))
@@ -77,7 +75,7 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
                     
                 video.release()
                 
-                # සෑදූ වීඩියෝවට සැබෑම සංගීතය (Audio) එකතු කිරීම
+                # 3. පසුබිම් සංගීතය එකතු කිරීම
                 if bg_music is not None:
                     with open("temp_audio.mp3", "wb") as f:
                         f.write(bg_music.getbuffer())
@@ -91,14 +89,16 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
                     video_clip.close()
                     audio_clip.close()
                 else:
+                    if os.path.exists(final_video):
+                        os.remove(final_video)
                     os.rename(temp_video, final_video)
                 
-                st.success("🎉 සංගීතය සහිත AI වීඩියෝව සාදා නිමයි!")
+                st.success("🎉 ඔබේ TikTok වීඩියෝව සාර්ථකව සාදා නිමයි!")
                 with open(final_video, "rb") as file:
                     st.download_button(
-                        label="📥 සාදාගත් AI වීඩියෝව ඩවුන්ලෝඩ් කරගන්න",
+                        label="📥 සාදාගත් වීඩියෝව ඩවුන්ලෝඩ් කරගන්න",
                         data=file,
-                        file_name="tiktok_ai_music_video.mp4",
+                        file_name="tiktok_video.mp4",
                         mime="video/mp4"
                     )
             except Exception as e:
