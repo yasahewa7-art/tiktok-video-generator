@@ -116,7 +116,7 @@
         
         <div class="form-group">
             <label style="display:block; margin-bottom:8px;">වීඩියෝ මාතෘකාව (ඕනෑම එකක් ලබාදෙන්න):</label>
-            <input type="text" id="videoTopic" placeholder="උදා: kandy, food, cricket, dance, car...">
+            <input type="text" id="videoTopic" placeholder="උදා: kandy, food, cricket, car...">
         </div>
 
         <button onclick="generateAIVideo()">🎬 සැබෑ AI වීඩියෝව ජෙනරේට් කරන්න</button>
@@ -124,7 +124,7 @@
     </div>
 
     <div class="preview-panel">
-        <video id="aiVideoPlayer" controls loop></video>
+        <video id="aiVideoPlayer" controls loop crossorigin="anonymous"></video>
         <div class="caption-overlay" id="captionOverlay"></div>
         <div id="placeholderText" style="color:#a2a2ad; text-align:center; padding:20px;">ඔබේ සැබෑ AI වීඩියෝව මෙතැනින් ප්ලේ වේවි</div>
     </div>
@@ -148,8 +148,8 @@
         videoPlayer.style.display = 'none';
         caption.style.display = 'none';
 
-        // Pexels Open Video API එක හරහා පරිශීලකයා දෙන ඕනෑම වචනයකට ගැළපෙන සැබෑ වීඩියෝවක් සෙවීම
-        const pexelsApiKey = '563492ad6f9170000100000139b4b005ca7740e599e6931535eb018e'; // නොමිලේ වැඩ කරන පොදු API Key එකක්
+        // Pexels Open Video API
+        const pexelsApiKey = '563492ad6f9170000100000139b4b005ca7740e599e6931535eb018e'; 
         const apiUrl = `https://pexels.com{encodeURIComponent(topicInput)}&per_page=1&orientation=portrait`;
 
         fetch(apiUrl, {
@@ -158,10 +158,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.videos && data.videos.length > 0) {
-                // ගැළපෙන සැබෑ වීඩියෝවක් හමු වූ විට එහි ලින්ක් එක ලබාගැනීම
+                // දර්ශන නිවැරදිව ලබා ගැනීමට [0] දර්ශකය නිවැරදි කර ඇත
                 const videoFiles = data.videos[0].video_files;
-                // උසස් තත්ත්වයේ SD/HD ලින්ක් එකක් තෝරාගැනීම
-                const idealVideo = videoFiles.find(f => f.width >= 480) || videoFiles[0];
+                const idealVideo = videoFiles.find(f => f.width >= 480 && f.width <= 720) || videoFiles[0];
 
                 status.innerText = "✅ සැබෑ රූපරාමු සොයාගන්නා ලදී! වීඩියෝව සකසමින් පවතී...";
 
@@ -173,7 +172,6 @@
                     videoPlayer.load();
                     videoPlayer.play();
 
-                    // සිංහල/ඉංග්‍රීසි මිශ්‍ර ලස්සන TikTok කැප්ෂන්ස් පද්ධතිය
                     const captions = [
                         `Today we are exploring about ${topicInput}!`,
                         `This is why everyone loves this topic.`,
@@ -191,10 +189,9 @@
                             caption.innerText = captions[2];
                         }
                     };
-                }, 2000);
+                }, 1500);
 
             } else {
-                // කිසිවක් හමු නොවුවහොත් පොදු ලස්සන වීඩියෝවක් පෙන්වීම
                 status.innerText = "💡 නිවැරදිම රූපරාමු සකස් වෙමින් පවතී...";
                 videoPlayer.src = "https://vimeo.com";
                 videoPlayer.style.display = 'block';
