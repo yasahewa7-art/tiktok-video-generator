@@ -6,13 +6,14 @@ from PIL import Image, ImageDraw, ImageFont
 import google.generativeai as genai
 from moviepy.editor import VideoFileClip, AudioFileClip # මියුසික් එකතු කිරීමට
 
-# 1. Google Gemini AI API සක්‍රීය කිරීම (Gemini 1.5 Flash මොඩල් එක සඳහා)
-GEMINI_API_KEY = "AQ.Ab8RN6KlRWHX_CeScv-42hhuJAE7QH3RGzHu_6ZFVob9Cgle-w"
+# 1. Streamlit Secrets හරහා ආරක්ෂිතව Google Gemini AI API සක්‍රීය කිරීම
+# (GitHub එකට ඔබේ Key එක කෙලින්ම නොපෙනෙන නිසා මෙය කවදාවත් බ්ලොක් නොවේ)
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=GEMINI_API_KEY)
 
 st.set_page_config(page_title="One-Click AI TikTok Generator v2", page_icon="🚀", layout="centered")
 st.title("🎬 One-Click AI TikTok වීඩියෝ සාදන්නා (සංගීතය සහිතව)")
-st.write("AI පිටපත්, සැබෑ රූපරාමු සහ පසුබිම් සංගීතය එකම ක්ලික් එකකින්!")
+st.write("AI පිටපත්, සැබෑ ਰූපරාමු සහ පසුබිම් සංගීතය එකම ක්ලික් එකකින්!")
 
 topic = st.text_input("වීඩියෝ මාතෘකාව (Topic):", placeholder="උදා: ලංකාවේ අමුතුම කෑම වර්ග 3ක්...")
 bg_image = st.file_uploader("1. පසුබිම් පින්තූරය ඇතුළත් කරන්න (Image Upload):", type=["jpg", "png", "jpeg"])
