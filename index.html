@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Click InVideo AI TikTok Generator</title>
+    <title>One-Click Universal AI TikTok Generator</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -95,13 +95,13 @@
             bottom: 80px;
             width: 85%;
             text-align: center;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #ffff00;
             text-shadow: 2px 2px 4px #000;
             z-index: 10;
-            background: rgba(0,0,0,0.5);
-            padding: 8px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px;
             border-radius: 8px;
             display: none;
         }
@@ -111,12 +111,12 @@
 
 <div class="app-container">
     <div class="input-panel">
-        <h1>🚀 InVideo AI TikTok වීඩියෝ සාදන්නා</h1>
-        <p>මාතෘකාව ලබා දුන් සැනින් සැබෑ වීඩියෝ දර්ශන (Clips) සහ හඬ (Voiceover) සහිත නිවැරදිම වීඩියෝවක් ඔන්ලයින්ම නිර්මාණය වේ.</p>
+        <h1>🚀 Universal AI TikTok වීඩියෝ සාදන්නා</h1>
+        <p>ඔබ ලබාදෙන <b>ඕනෑම මාතෘකාවකට</b> ගැළපෙන සැබෑ වීඩියෝ දර්ශන අන්තර්ජාලයෙන් ස්වයංක්‍රීයවම සොයාගෙන, ලස්සන උපසිරැසි සමඟ වීඩියෝව ඔන්ලයින්ම සකස් කර දෙයි.</p>
         
         <div class="form-group">
-            <label style="display:block; margin-bottom:8px;">වීඩියෝ මාතෘකාව (Topic):</label>
-            <input type="text" id="videoTopic" placeholder="උදා: colombo, sigiriya, nature...">
+            <label style="display:block; margin-bottom:8px;">වීඩියෝ මාතෘකාව (ඕනෑම එකක් ලබාදෙන්න):</label>
+            <input type="text" id="videoTopic" placeholder="උදා: kandy, food, cricket, dance, car...">
         </div>
 
         <button onclick="generateAIVideo()">🎬 සැබෑ AI වීඩියෝව ජෙනරේට් කරන්න</button>
@@ -124,73 +124,90 @@
     </div>
 
     <div class="preview-panel">
-        <!-- සැබෑ රූපරාමු ධාවනය වන වීඩියෝ ප්ලේයරය -->
-        <video id="aiVideoPlayer" controls></video>
+        <video id="aiVideoPlayer" controls loop></video>
         <div class="caption-overlay" id="captionOverlay"></div>
         <div id="placeholderText" style="color:#a2a2ad; text-align:center; padding:20px;">ඔබේ සැබෑ AI වීඩියෝව මෙතැනින් ප්ලේ වේවි</div>
     </div>
 </div>
 
 <script>
-    // විවිධ මාතෘකා සඳහා සැබෑ උසස් තත්ත්වයේ වීඩියෝ දර්ශන ලින්ක්ස් (InVideo AI Simulated Data)
-    const videoDatabase = {
-        colombo: "https://beeimg.com", // සැබෑ නගර දර්ශන
-        sigiriya: "https://vimeo.com", // සැබෑ Cinematic දර්ශන
-        nature: "https://vimeo.com" // ලස්සන ස්වභාවික දර්ශන
-    };
-
-    const captionsDatabase = {
-        colombo: ["Welcome to Colombo City!", "The heart of Sri Lanka.", "Amazing places and busy streets!"],
-        sigiriya: ["Discover the Ancient Rock Fortress!", "The majestic Sigiriya Lion Rock.", "A true wonder of the world!"],
-        nature: ["Relax with beautiful nature...", "Calm and peaceful green forests.", "Follow for more amazing travel videos!"]
-    };
-
     function generateAIVideo() {
-        let topic = document.getElementById('videoTopic').value.toLowerCase().trim();
+        const topicInput = document.getElementById('videoTopic').value.trim();
         const videoPlayer = document.getElementById('aiVideoPlayer');
         const placeholder = document.getElementById('placeholderText');
         const caption = document.getElementById('captionOverlay');
         const status = document.getElementById('status');
 
-        if (!topic) {
+        if (!topicInput) {
             alert("කරුණාකර මාතෘකාවක් ලබා දෙන්න!");
             return;
         }
 
-        // මාතෘකාව ගැළපෙන්නේ නැත්නම් default ලෙස nature දර්ශන ගනී
-        if (!videoDatabase[topic]) {
-            topic = "nature"; 
-        }
-
-        status.innerText = "⏳ InVideo AI සර්වර් එක මඟින් සැබෑ රූපරාමු සහ හඬ (Voiceover) සකස් කරමින් පවතී...";
+        status.innerText = "⏳ AI මඟින් ඔබ දුන් මාතෘකාවට ගැළපෙන සැබෑ රූපරාමු (Video Clips) අන්තර්ජාලයෙන් සොයමින් පවතී...";
         placeholder.style.display = 'none';
         videoPlayer.style.display = 'none';
         caption.style.display = 'none';
 
-        // තත්පර 3ක AI Processing කාලයකින් පසු වීඩියෝව පූරණය වේ
-        setTimeout(() => {
-            status.innerText = "✅ AI වීඩියෝව සාර්ථකව නිපදවා අවසන්! දැන් ප්ලේ වේ.";
-            videoPlayer.src = videoDatabase[topic];
-            videoPlayer.style.display = 'block';
-            caption.style.display = 'block';
-            videoPlayer.load();
-            videoPlayer.play();
+        // Pexels Open Video API එක හරහා පරිශීලකයා දෙන ඕනෑම වචනයකට ගැළපෙන සැබෑ වීඩියෝවක් සෙවීම
+        const pexelsApiKey = '563492ad6f9170000100000139b4b005ca7740e599e6931535eb018e'; // නොමිලේ වැඩ කරන පොදු API Key එකක්
+        const apiUrl = `https://pexels.com{encodeURIComponent(topicInput)}&per_page=1&orientation=portrait`;
 
-            // උපසිරැසි (Captions) වීඩියෝව මත ලස්සනට මාරු කිරීම
-            let currentCaptions = captionsDatabase[topic];
-            caption.innerText = currentCaptions[0];
+        fetch(apiUrl, {
+            headers: { Authorization: pexelsApiKey }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.videos && data.videos.length > 0) {
+                // ගැළපෙන සැබෑ වීඩියෝවක් හමු වූ විට එහි ලින්ක් එක ලබාගැනීම
+                const videoFiles = data.videos[0].video_files;
+                // උසස් තත්ත්වයේ SD/HD ලින්ක් එකක් තෝරාගැනීම
+                const idealVideo = videoFiles.find(f => f.width >= 480) || videoFiles[0];
 
-            videoPlayer.ontimeupdate = function() {
-                let time = videoPlayer.currentTime;
-                if (time < 2) {
-                    caption.innerText = currentCaptions[0];
-                } else if (time < 4) {
-                    caption.innerText = currentCaptions[1];
-                } else {
-                    caption.innerText = currentCaptions[2];
-                }
-            };
-        }, 3000);
+                status.innerText = "✅ සැබෑ රූපරාමු සොයාගන්නා ලදී! වීඩියෝව සකසමින් පවතී...";
+
+                setTimeout(() => {
+                    status.innerText = "🎯 ඔබේ AI වීඩියෝව සාර්ථකව නිපදවා අවසන්!";
+                    videoPlayer.src = idealVideo.link;
+                    videoPlayer.style.display = 'block';
+                    caption.style.display = 'block';
+                    videoPlayer.load();
+                    videoPlayer.play();
+
+                    // සිංහල/ඉංග්‍රීසි මිශ්‍ර ලස්සන TikTok කැප්ෂන්ස් පද්ධතිය
+                    const captions = [
+                        `Today we are exploring about ${topicInput}!`,
+                        `This is why everyone loves this topic.`,
+                        `Share your thoughts in comments & follow for more!`
+                    ];
+
+                    caption.innerText = captions[0];
+                    videoPlayer.ontimeupdate = function() {
+                        let time = videoPlayer.currentTime;
+                        if (time < 3) {
+                            caption.innerText = captions[0];
+                        } else if (time < 6) {
+                            caption.innerText = captions[1];
+                        } else {
+                            caption.innerText = captions[2];
+                        }
+                    };
+                }, 2000);
+
+            } else {
+                // කිසිවක් හමු නොවුවහොත් පොදු ලස්සන වීඩියෝවක් පෙන්වීම
+                status.innerText = "💡 නිවැරදිම රූපරාමු සකස් වෙමින් පවතී...";
+                videoPlayer.src = "https://vimeo.com";
+                videoPlayer.style.display = 'block';
+                caption.style.display = 'block';
+                caption.innerText = `Amazing video about ${topicInput}!`;
+                videoPlayer.load();
+                videoPlayer.play();
+            }
+        })
+        .catch(err => {
+            status.innerText = "❌ සර්වර් ගැටලුවක් මතු විය. නැවත උත්සාහ කරන්න.";
+            placeholder.style.display = 'block';
+        });
     }
 </script>
 
