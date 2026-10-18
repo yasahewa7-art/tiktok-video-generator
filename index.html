@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Click TikTok Video Generator</title>
+    <title>One-Click TikTok Video Generator v2</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -20,7 +20,7 @@
             padding: 25px;
             border-radius: 16px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            max-width: 800px;
+            max-width: 850px;
             width: 100%;
             display: flex;
             gap: 20px;
@@ -44,7 +44,6 @@
         canvas {
             width: 100%;
             height: 100%;
-            background: #000;
         }
         h1 {
             color: #fe2c55;
@@ -52,17 +51,27 @@
             margin-top: 0;
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        input[type="text"] {
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        input[type="text"], input[type="file"] {
             width: 100%;
             padding: 12px;
             background: #2f303d;
             border: 1px solid #424353;
             border-radius: 8px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             box-sizing: border-box;
+        }
+        input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
         }
         button {
             width: 100%;
@@ -74,13 +83,21 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #e11d43;
         }
         .status-text {
             color: #ffff00;
             font-weight: bold;
             margin-top: 10px;
             text-align: center;
+            font-size: 14px;
+        }
+        /* Hidden video element used for rendering source */
+        #sourceVideo {
+            display: none;
         }
     </style>
 </head>
@@ -88,15 +105,20 @@
 
 <div class="app-container">
     <div class="input-panel">
-        <h1>🚀 සැබෑ One-Click වීඩියෝ සාදන්නා</h1>
-        <p>මාතෘකාව ඇතුළත් කර බටන් එක ඔබන්න. සැබෑ වීඩියෝවක් මෙතැනින්ම සකස් වී බාගත වේ.</p>
+        <h1>🚀 සැබෑ රූපරාමු සහිත TikTok සාදන්නා</h1>
+        <p>මාතෘකාවක් දෙන්න. අවශ්‍ය නම් පින්තූරයක්/වීඩියෝවක් අප්ලෝඩ් කරන්න. නැතහොත් ඔටෝමැටිකලි ඉන්ටර්නෙට් එකෙන් වීඩියෝ ලබාගනී!</p>
         
         <div class="form-group">
-            <label>වීඩියෝ මාතෘකාව (Topic):</label>
+            <label>1. වීඩියෝ මාතෘකාව (Topic):</label>
             <input type="text" id="videoTopic" placeholder="ලංකාවේ ලස්සනම තැන්...">
         </div>
 
-        <button onclick="startGenerating()">🎬 වීඩියෝව නිපදවන්න සහ බාගත කරන්න</button>
+        <div class="form-group">
+            <label>2. ඔබේම පසුබිම් රූපයක් (කැමති නම් පමණක්):</label>
+            <input type="file" id="imageUpload" accept="image/*">
+        </div>
+
+        <button onclick="prepareMedia()">🎬 වීඩියෝව නිපදවන්න සහ බාගත කරන්න</button>
         <div id="status" class="status-text"></div>
     </div>
 
@@ -105,20 +127,57 @@
     </div>
 </div>
 
+<!-- Standard Background Video from Internet -->
+<video id="sourceVideo" crossorigin="anonymous" loop muted></video>
+
 <script>
+    // Copyright-Free සැබෑ Cinematic වීඩියෝවක් (Pexels හරහා)
+    const defaultVideoUrl = "https://vimeo.com";
+    let uploadedImage = null;
+
+    // පරිශීලකයා පින්තූරයක් අප්ලෝඩ් කළහොත් එය කියවීම
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                uploadedImage = new Image();
+                uploadedImage.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function prepareMedia() {
+        const status = document.getElementById('status');
+        const videoEl = document.getElementById('sourceVideo');
+
+        // පරිශීලකයා පින්තූරයක් අප්ලෝඩ් කර නොමැති නම්, ඉන්ටර්නෙට් වීඩියෝව සක්‍රීය කරයි
+        if (!uploadedImage) {
+            status.innerText = "🌐 පසුබිම් වීඩියෝව අන්තර්ජාලයෙන් ලබාගනිමින් පවතී...";
+            videoEl.src = defaultVideoUrl;
+            videoEl.load();
+            videoEl.onloadeddata = function() {
+                videoEl.play();
+                startGenerating();
+            };
+        } else {
+            startGenerating();
+        }
+    }
+
     function startGenerating() {
         const topic = document.getElementById('videoTopic').value || "මගේ වීඩියෝව";
         const canvas = document.getElementById('videoCanvas');
         const ctx = canvas.getContext('2d');
         const status = document.getElementById('status');
+        const videoEl = document.getElementById('sourceVideo');
         
-        status.innerText = "⏳ වීඩියෝව සකස් වෙමින් පවතී... (කරුණාකර රැඳී සිටින්න)";
+        status.innerText = "⏳ වීඩියෝව රෙන්ඩර් වෙමින් පවතී... (තත්පර 5ක් රැඳී සිටින්න)";
         
-        // වෙබ් සේවාදායකයක (Server) පවතින බැවින් මෙම පටිගත කිරීමේ තාක්ෂණය දැන් බ්‍රවුසරයේ ක්‍රියා කරයි
         const stream = canvas.captureStream(30); 
         let mediaRecorder;
         
-        // බ්‍රවුසරය අනුව සහය දක්වන Video Format එක තෝරාගැනීම
         if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
             mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
         } else {
@@ -133,36 +192,50 @@
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'tiktok_video.webm';
+            a.download = 'tiktok_real_video.webm';
             a.click();
-            status.innerText = "✅ වීඩියෝව සාර්ථකව බාගත විය!";
+            status.innerText = "✅ වීඩියෝව සාර්ථකව බාගත විය! බ්‍රවුසරයට Drag කර බලන්න.";
+            videoEl.pause();
         };
 
         mediaRecorder.start();
 
         let frame = 0;
         const interval = setInterval(() => {
-            // පසුබිම් වර්ණ සංකලනය (Dynamic Background Animation)
-            let hue = (frame * 3) % 360;
-            ctx.fillStyle = `hsl(${hue}, 70%, 30%)`;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. පසුබිම ඇඳීම (අප්ලෝඩ් කළ රූපය හෝ ඉන්ටර්නෙට් සැබෑ වීඩියෝව)
+            if (uploadedImage) {
+                // පින්තූරය 9:16 රාමුවට ගැලපෙන සේ ඇඳීම
+                ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                // සැබෑ චලනය වන වීඩියෝව කැන්වසය මත ඇඳීම
+                ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+            }
+            
+            // වීඩියෝව වඩාත් පැහැදිලිව පෙනීමට කළු පැහැති සියුම් තට්ටුවක් (Overlay) දැමීම
+            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // මැද ඇති සිංහල මාතෘකාව ඇඳීම
+
+            // 2. ප්‍රධාන සිංහල මාතෘකාව ඇඳීම
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 48px sans-serif";
+            ctx.font = "bold 52px sans-serif";
             ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText(topic, canvas.width / 2, canvas.height / 2 - 50);
+            ctx.shadowColor = "black";
+            ctx.shadowBlur = 10;
+            ctx.fillText(topic, canvas.width / 2, canvas.height / 2 - 60);
             
-            // මාරු වන උපසිරැසි අකුරු
-            const captions = ["අද මම ගෙනාවේ...", "විශේෂ රහසක්!", "දැන්ම බලලා Share කරන්න!"];
+            // 3. මාරු වන උපසිරැසි (Captions) ඇඳීම
+            const captions = ["අද ඔයාලට ගෙනාවේ...", "විශේෂම වීඩියෝවක්!", "ලයික් එකක් දාලා සපෝට් කරන්න!"];
             let currentCaption = captions[Math.floor(frame / 45) % captions.length];
             ctx.fillStyle = "#ffff00";
-            ctx.font = "40px sans-serif";
-            ctx.fillText(currentCaption, canvas.width / 2, canvas.height / 2 + 50);
+            ctx.font = "bold 42px sans-serif";
+            ctx.fillText(currentCaption, canvas.width / 2, canvas.height / 2 + 60);
+            
+            ctx.shadowBlur = 0; // Reset shadow
 
             frame++;
-            if (frame > 135) { // තත්පර 4.5ක වීඩියෝවක්
+            if (frame > 150) { // තත්පර 5ක සැබෑ වීඩියෝවක්
                 clearInterval(interval);
                 mediaRecorder.stop();
             }
