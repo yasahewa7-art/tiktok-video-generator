@@ -39,9 +39,8 @@ if st.button("🚀 වීඩියෝව සකසන්න (Generate Video)"):
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                 video = cv2.VideoWriter(temp_video, fourcc, fps, (width, height))
                 
-                # ඔන්ලයින් සර්වර් එක ඇතුළේ ඇති Default Font එකක් භාවිත කිරීම
-                font_path = "arial.ttf"
-                font = ImageFont.truetype(font_path, 40)
+                # Linux සර්වර්ස්වල ඇතිවන 'cannot open resource' වැරැද්ද මඟහැරවීමට Default Font එක භාවිත කිරීම
+                font = ImageFont.load_default()
                 
                 num_frames = duration_sec * fps
                 
