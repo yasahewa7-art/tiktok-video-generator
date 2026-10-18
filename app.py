@@ -3,16 +3,16 @@ import cv2
 import numpy as np
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
-import google.generativeai as genai
-from moviepy.editor import VideoFileClip, AudioFileClip # මියුසික් එකතු කිරීමට
+from google import genai # අලුත්ම නිල Google GenAI ලයිබ්‍රරිය
+from moviepy.editor import VideoFileClip, AudioFileClip
 
-# 1. Streamlit Secrets හරහා ආරක්ෂිතව Google Gemini AI API සක්‍රීය කිරීම
+# 1. Streamlit Secrets හරහා ආරක්ෂිතව අලුත්ම Google GenAI සක්‍රීය කිරීම
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
-genai.configure(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
-st.set_page_config(page_title="One-Click AI TikTok Generator v2", page_icon="🚀", layout="centered")
-st.title("🎬 One-Click AI TikTok වීඩියෝ සාදන්නා (සංගීතය සහිතව)")
-st.write("AI පිටපත්, සැබෑ රූපරාමු සහ පසුබිම් සංගීතය එකම ක්ලික් එකකින්!")
+st.set_page_config(page_title="One-Click AI TikTok Generator v3", page_icon="🚀", layout="centered")
+st.title("🎬 One-Click AI TikTok වීඩියෝ සාදන්නා (ඔන්ලයින් සජීවීව)")
+st.write("AI පිටපත්, සැබෑ රූපරාමු සහ පසුබිම් සංගීතය එකම ක්ලික් එකකින් ඔන්ලයින්ම!")
 
 topic = st.text_input("වීඩියෝ මාතෘකාව (Topic):", placeholder="උදා: ලංකාවේ අමුතුම කෑම වර්ග 3ක්...")
 bg_image = st.file_uploader("1. පසුබිම් පින්තූරය ඇතුළත් කරන්න (Image Upload):", type=["jpg", "png", "jpeg"])
@@ -24,10 +24,11 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
     else:
         with st.spinner("🧠 AI මඟින් පිටපත ලියමින් පවතී..."):
             try:
-                # 404 Error එක මඟහැරවීමට මොඩල් එකේ නම 'models/gemini-1.5-flash' ලෙස නිවැරදි කර ඇත
-                model = genai.GenerativeModel('models/gemini-1.5-flash')
-                prompt = f"Write a short, engaging TikTok video caption in Sinhala text about '{topic}'. Keep it inside 3 very short punchy sentences separated by commas."
-                response = model.generate_content(prompt)
+                # නවතම gemini-1.5-flash මොඩල් එකෙන් නිවැරදිව සිංහල පිටපත් ලිවීම
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=f"Write a short, engaging TikTok video caption in Sinhala text about '{topic}'. Keep it inside 3 very short punchy sentences separated by commas.",
+                )
                 
                 captions = [c.strip() for c in response.text.split(',') if c.strip()][:3]
                 if len(captions) < 3:
@@ -45,7 +46,8 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                 video = cv2.VideoWriter(temp_video, fourcc, fps, (width, height))
                 
-                font_path = "C:\\Windows\\Fonts\\iskpota.ttf" if os.path.exists("C:\\Windows\\Fonts\\iskpota.ttf") else "arial.ttf"
+                # ඔන්ලයින් සර්වර් එක ඇතුළේ Default සපෝට් කරන ෆොන්ට් එකක් තෝරාගැනීම
+                font_path = "arial.ttf"
                 font = ImageFont.truetype(font_path, 42)
                 num_frames = duration_sec * fps
                 
@@ -75,7 +77,7 @@ if st.button("🚀 AI වීඩියෝව සකසන්න"):
                     
                 video.release()
                 
-                # 3. සෑදූ වීඩියෝවට සැබෑම සංගීතය (Audio) එකතු කිරීම
+                # සෑදූ වීඩියෝවට සැබෑම සංගීතය (Audio) එකතු කිරීම
                 if bg_music is not None:
                     with open("temp_audio.mp3", "wb") as f:
                         f.write(bg_music.getbuffer())
