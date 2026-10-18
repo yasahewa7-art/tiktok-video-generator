@@ -3,215 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Click TikTok Video Generator v3</title>
+    <title>Download One-Click AI TikTok Video Generator</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background-color: #0b0b0e;
             color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .app-container {
+        .download-box {
             background: #161722;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            max-width: 850px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            max-width: 600px;
             width: 100%;
-            display: flex;
-            gap: 20px;
-            box-sizing: border-box;
-        }
-        .input-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .preview-panel {
-            width: 320px;
-            height: 560px;
-            background: #000000;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #2f303d;
-        }
-        canvas {
-            width: 100%;
-            height: 100%;
+            text-align: center;
+            border: 1px solid #2f303d;
         }
         h1 {
             color: #fe2c55;
-            font-size: 24px;
-            margin-top: 0;
+            font-size: 28px;
+            margin-bottom: 10px;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #ccc;
-        }
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            background: #2f303d;
-            border: 1px solid #424353;
-            border-radius: 8px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
+        .btn-download {
+            display: inline-block;
+            padding: 16px 32px;
             background-color: #fe2c55;
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            text-decoration: none;
+            font-size: 18px;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+            border-radius: 50px;
+            margin: 25px 0;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
         }
-        button:hover {
+        .btn-download:hover {
             background-color: #e11d43;
+            transform: scale(1.05);
         }
-        .status-text {
-            color: #ffff00;
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
+        .instructions {
+            text-align: left;
+            background: #232433;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        code {
+            background: #000;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #25d366;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="input-panel">
-        <h1>🚀 සැබෑ රූපරාමු සහිත TikTok සාදන්නා</h1>
-        <p>මාතෘකාවක් දෙන්න. ඔබේම පින්තූරයක් අප්ලෝඩ් කරන්න. එක ක්ලික් එකෙන් සැබෑ වීඩියෝවක් සකස් වේ!</p>
-        
-        <div class="form-group">
-            <label>1. වීඩියෝ මාතෘකාව (Topic):</label>
-            <input type="text" id="videoTopic" placeholder="ලංකාවේ ලස්සනම තැන්...">
-        </div>
-
-        <div class="form-group">
-            <label>2. පසුබිම් පින්තූරය (Upload Image):</label>
-            <input type="file" id="imageUpload" accept="image/*">
-        </div>
-
-        <button onclick="startGenerating()">🎬 වීඩියෝව නිපදවන්න සහ බාගත කරන්න</button>
-        <div id="status" class="status-text"></div>
-    </div>
-
-    <div class="preview-panel">
-        <canvas id="videoCanvas" width="720" height="1280"></canvas>
+<div class="download-box">
+    <h1>🚀 One-Click AI TikTok Video Generator</h1>
+    <p style="color: #a2a2ad;">CapCut වලට වඩා පහසු, ලෝකයේ පළමු ටයිම්ලයින් රහිත Python AI වීඩියෝ සාදන්නා දැන් නොමිලේ බාගත කරගන්න!</p>
+    
+    <!-- ඔයාගේ Python app.py ෆයිල් එක GitHub එකට දැමූ පසු එහි ලින්ක් එක මෙතැනට දිය හැක -->
+    <a href="app.py" download class="btn-download">📥 Python AI Software එක බාගත කරගන්න</a>
+    
+    <div class="instructions">
+        <h3 style="color: #ffff00; margin-top: 0;">💻 පරිගණකයේ ක්‍රියාත්මක කරන ආකාරය:</h3>
+        1. ප්‍රථමයෙන් ඔබේ පරිගණකයට <b>Python</b> ස්ථාපනය කරගන්න.<br>
+        2. Command Prompt (CMD) විවෘත කර මෙම කේතය මඟින් අවශ්‍ය කොටස් ඉන්ස්ටෝල් කරන්න:<br>
+        <code>pip install streamlit opencv-python numpy pillow google-generativeai</code><br>
+        3. ඩවුන්ලෝඩ් කරගත් ෆයිල් එක ඇති තැනට CMD එකෙන් ගොස් මෙය ක්‍රියාත්මක කරන්න:<br>
+        <code>streamlit run app.py</code>
     </div>
 </div>
-
-<script>
-    let uploadedImage = null;
-
-    // පින්තූරය අප්ලෝඩ් කළ විට එය කියවා සූදානම් කරගැනීම
-    document.getElementById('imageUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                uploadedImage = new Image();
-                uploadedImage.src = event.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-
-    function startGenerating() {
-        const topic = document.getElementById('videoTopic').value || "මගේ වීඩියෝව";
-        const canvas = document.getElementById('videoCanvas');
-        const ctx = canvas.getContext('2d');
-        const status = document.getElementById('status');
-        
-        status.innerText = "⏳ වීඩියෝව සකස් වෙමින් පවතී... (තත්පර 5ක් රැඳී සිටින්න)";
-        
-        const stream = canvas.captureStream(30); 
-        let mediaRecorder;
-        
-        try {
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-        } catch(e) {
-            mediaRecorder = new MediaRecorder(stream);
-        }
-        
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-        mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'tiktok_generated_video.webm';
-            a.click();
-            status.innerText = "✅ වීඩියෝව සාර්ථකව බාගත විය! බ්‍රවුසරයට Drag කර බලන්න.";
-        };
-
-        mediaRecorder.start();
-
-        let frame = 0;
-        const interval = setInterval(() => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 1. පසුබිම ඇඳීම
-            if (uploadedImage) {
-                // අප්ලෝඩ් කළ පින්තූරය 9:16 Frame එකට ගැලපෙන සේ ඇඳීම
-                ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
-            } else {
-                // පින්තූරයක් නැත්නම් ලස්සන Gradient පසුබිමක් ඇඳීම
-                let hue = (frame * 3) % 360;
-                ctx.fillStyle = `hsl(${hue}, 60%, 25%)`;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            
-            // අකුරු පැහැදිලිව පෙනීමට කළු Overlay එකක් දැමීම
-            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 2. ප්‍රධාන සිංහල මාතෘකාව ඇඳීම
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 52px sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.shadowColor = "black";
-            ctx.shadowBlur = 8;
-            ctx.fillText(topic, canvas.width / 2, canvas.height / 2 - 50);
-            
-            // 3. මාරු වන උපසිරැසි (Captions) ඇඳීම
-            const captions = ["අද ඔයාලට ගෙනාවේ...", "විශේෂම වීඩියෝවක්!", "දැන්ම බලලා Share කරන්න!"];
-            let currentCaption = captions[Math.floor(frame / 45) % captions.length];
-            ctx.fillStyle = "#ffff00";
-            ctx.font = "bold 42px sans-serif";
-            ctx.fillText(currentCaption, canvas.width / 2, canvas.height / 2 + 50);
-            
-            ctx.shadowBlur = 0;
-
-            frame++;
-            if (frame > 150) { // තත්පර 5ක වීඩියෝවක්
-                clearInterval(interval);
-                mediaRecorder.stop();
-            }
-        }, 1000 / 30);
-    }
-</script>
 
 </body>
 </html>
